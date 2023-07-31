@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vn">
+  <head>
+    <title>[BOOKING] Account information</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p>Welcome <b th:text="${account.name}"></b>,</p>
+    <p>Welcome to BOOKING - A website system to search and manage homestay bookings,</p>
+    <p>Your login account to the BOOKING system is successfully registered.</p>
+    <p>Here is your login information: (Please login and change your password to ensure your information is kept safe)</p>
+    <p>
+    + USERNAME: <b th:text="${account.username}"></b><br>
+    + PASSWORD: <b th:text="${account.password}"></b>
+    </p>
+    <p>
+       ⇨ <a href="http://localhost:3000/">System access link</a>
+    </p>
+    <p>
+      <span>Thanks and Best Regards, </span>
+      <br />
+      <em>BOOKING Team.</em>
+    </p>
+  </body>
+</html>
