@@ -1,8 +1,6 @@
 package website.booking_homestay.service;
 
 import org.springframework.http.ResponseEntity;
-import website.booking_homestay.DTO.TouristDTO;
-import website.booking_homestay.entity.Tourist;
 
 public interface ITouristService {
 

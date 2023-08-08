@@ -1,7 +1,6 @@
 package website.booking_homestay.service;
 
 import org.springframework.http.ResponseEntity;
-import website.booking_homestay.DTO.FacilityDTO;
 
 public interface IFacilitiesService {
     ResponseEntity<?> createFacility(Object name);

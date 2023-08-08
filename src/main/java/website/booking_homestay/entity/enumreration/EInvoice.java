@@ -5,5 +5,5 @@ public enum EInvoice {
     UNPAID,
     PENDING,
     CANCEL,
-    EXPIRED
+    CHECKOUT,
 }

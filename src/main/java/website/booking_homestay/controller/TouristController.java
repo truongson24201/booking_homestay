@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import website.booking_homestay.DTO.TouristDTO;
-import website.booking_homestay.entity.Tourist;
 import website.booking_homestay.service.ITouristService;
 
 @RestController

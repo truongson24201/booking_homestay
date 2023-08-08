@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import website.booking_homestay.DTO.TouristDTO;
 import website.booking_homestay.DTO.view.BranchView;
 import website.booking_homestay.entity.Branch;
 import website.booking_homestay.entity.Tourist;

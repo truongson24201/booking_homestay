@@ -1,10 +1,12 @@
 package website.booking_homestay.service;
 
 import org.springframework.http.ResponseEntity;
-import website.booking_homestay.DTO.InvoiceDTO;
-import website.booking_homestay.DTO.RegisterHomestay;
 import website.booking_homestay.DTO.RequestBooking;
+import website.booking_homestay.DTO.create.InvoiceCreate;
+import website.booking_homestay.DTO.update.InvoiceClientUpdate;
 import website.booking_homestay.DTO.update.InvoiceUpdate;
+
+import java.util.Date;
 
 public interface IInvoiceService {
 
@@ -23,7 +25,7 @@ public interface IInvoiceService {
 
     ResponseEntity<?> getInfoUpdateInvoice(Long invoiceId);
 
-    ResponseEntity<?> registerHomestay(RegisterHomestay booking);
+    ResponseEntity<?> registerHomestay(Long homestayId,InvoiceCreate invoiceCreate);
 
     ResponseEntity<?> cancelInvoice(Long invoiceId);
 
@@ -31,7 +33,21 @@ public interface IInvoiceService {
 
     ResponseEntity<?> getInvoiceDetails(Long invoiceId);
 
-    ResponseEntity<?> getRegisterHomestay(RequestBooking booking);
+    ResponseEntity<?> getRegisterHomestay(Long homestayId,RequestBooking booking);
 
     ResponseEntity<?> getStatus();
+
+    ResponseEntity<?> getInvoiceClientDetails(Long invoiceId);
+
+    ResponseEntity<?> updateInvoiceClient(Long invoiceId, InvoiceClientUpdate clientUpdate);
+
+    ResponseEntity<?> updateInvoicePayment(Long invoiceId);
+
+    ResponseEntity<?> getTotalBooking(Date from, Date to);
+
+    ResponseEntity<?> getTotalActive(Date from, Date to);
+
+    ResponseEntity<?> getTotalCancel(Date from, Date to);
+
+    ResponseEntity<?> getTotalOfYear(Long year);
 }

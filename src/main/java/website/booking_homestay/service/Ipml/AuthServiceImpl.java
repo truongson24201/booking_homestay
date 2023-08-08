@@ -93,6 +93,9 @@ public class AuthServiceImpl implements IAuthService {
         if (!user.getStatus()){
             return ResponseEntity.badRequest().body("Your Account is block!");
         }
+        if (user.getRole().getName().equals(ERole.MANAGER) && user.getBranch() == null) {
+            return ResponseEntity.badRequest().body("You don't have been branch!, can't login");
+        }
         TokenResponse tokenResponse = new TokenResponse();
         RefreshToken refreshToken = user.getRefreshToken();
         tokenResponse.setAccessToken(jwtService.generateJwtToken(signin.getUsername(),new Date(new Date().getTime()+JwtServiceImpl.jwtExpirationMs)));

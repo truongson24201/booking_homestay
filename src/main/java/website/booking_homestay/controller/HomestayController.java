@@ -5,7 +5,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import website.booking_homestay.DTO.FacilityDTO;
 import website.booking_homestay.DTO.create.HomestayCreate;
 import website.booking_homestay.DTO.update.HomestayUpdate;
 import website.booking_homestay.entity.enumreration.EStatus;

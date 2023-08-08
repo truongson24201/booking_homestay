@@ -1,4 +1,4 @@
-package website.booking_homestay.DTO.view;
+package website.booking_homestay.DTO.details;
 
 import lombok.Data;
 import website.booking_homestay.entity.Facilities;

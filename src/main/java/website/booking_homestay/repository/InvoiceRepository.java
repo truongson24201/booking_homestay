@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import website.booking_homestay.DTO.chart.Ranks;
+import website.booking_homestay.DTO.chart.TotalBooking;
 import website.booking_homestay.entity.Invoice;
 import website.booking_homestay.entity.enumreration.EInvoice;
 import website.booking_homestay.entity.enumreration.EStatus;
@@ -18,7 +20,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
 
     @Query("SELECT invoice FROM Invoice invoice WHERE invoice.homestay.branch.branchId = :branchId " +
             "and invoice.status = :status")
-    List<Invoice> findAll(@Param("branchId") Long branchId,@Param("status") EInvoice status);
+    List<Invoice> findAllOfBranch(@Param("branchId") Long branchId,@Param("status") EInvoice status);
 
     @Query("SELECT invoice FROM Invoice invoice WHERE invoice.homestay.homestayId = :homestayId")
     List<Invoice> findOfHome(@Param("homestayId") Long homestayId);
@@ -34,10 +36,11 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
 
     Invoice findByEmailOrPhoneNumber(String email,String phone);
 
-    List<Invoice> findByStatus(EInvoice status);
-
     @Query("SELECT CASE WHEN COUNT(i) > 0 THEN TRUE ELSE FALSE END FROM Invoice i WHERE i.homestay.homestayId = :homestayId " +
             "and i.checkIn >= :checkIn and i.checkOut <= :checkOut and i.status <> 'CANCEL' ")
     boolean checkInvoicesHomeMatch(@Param("homestayId") Long homestayId,@Param("checkIn") Date checkIn,@Param("checkOut") Date checkOut);
+
+    @Query(value = "SELECT MONTH(date_create) as month, SUM(total) as total FROM invoices WHERE YEAR(date_create) = :year GROUP BY MONTH(date_create)", nativeQuery = true)
+    List<Object[]> getTotalOfYear(Long year);
 
 }

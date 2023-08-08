@@ -227,7 +227,8 @@ public class PricesServiceImpl implements IPricesService {
 
     @Override
     public ResponseEntity<?> getHomesNotBelongToPrice(Long priceId) {
-        List<Homestay> homestays = homesPricesRepository.findHomesNoBelongPriceId(priceId);
+        PriceList priceList = pricesRepository.findById(priceId).get();
+        List<Homestay> homestays = homestayRepository.findHomesNoBelongPriceId(priceList.getBranch().getBranchId(),priceId);
         List<HomestayDetails> homestayDetails = homestays.stream().map(homestay -> modelMapper.map(homestay,HomestayDetails.class))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(homestayDetails);

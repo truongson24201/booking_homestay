@@ -8,14 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import website.booking_homestay.DTO.BranchDTO;
-import website.booking_homestay.DTO.UserDTO;
-import website.booking_homestay.DTO.combox.BranchCombox;
 import website.booking_homestay.DTO.create.BranchCreate;
 import website.booking_homestay.DTO.details.BranchDetails;
 import website.booking_homestay.DTO.update.BranchUpdate;
 import website.booking_homestay.DTO.view.BranchView;
-import website.booking_homestay.DTO.view.HomestayView;
 import website.booking_homestay.DTO.view.UserView;
 import website.booking_homestay.entity.Branch;
 import website.booking_homestay.entity.Homestay;
@@ -106,7 +102,7 @@ public class BranchServiceImpl implements IBranchService {
         List<Homestay> homestays = branch.getHomestays();
         List<Homestay> homestaysFilter;
         if (!homestays.isEmpty()){
-            if (!branch.getStatus()){ //  false -> close all homestay
+            if (!branchUpdate.getStatus()){ //  false -> close all homestay
                 homestaysFilter = homestays.stream()
                         .filter(homestay -> homestay.getStatus().name().equals(EStatus.OPEN.name()))
                         .collect(Collectors.toList());
@@ -117,8 +113,14 @@ public class BranchServiceImpl implements IBranchService {
                         .collect(Collectors.toList());
                 homestaysFilter.forEach(homestay -> homestay.setStatus(EStatus.OPEN));
             }
-            homestayRepository.saveAll(homestaysFilter);
+            try {
+                homestayRepository.saveAll(homestaysFilter);
+            }catch (Exception e){
+                logger.error("Update branch failed!");
+                return ResponseEntity.badRequest().body(MessageResponse.ERROR_UPDATE);
+            }
         }
+
         if ( branchUpdate.getProvinceId() != null || branchUpdate.getDistrictId() != null || branchUpdate.getWardId() != null){
             branch.setProvince(null);
             branch.setDistrict(null);

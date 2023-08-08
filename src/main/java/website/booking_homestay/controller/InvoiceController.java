@@ -3,7 +3,6 @@ package website.booking_homestay.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import website.booking_homestay.DTO.InvoiceDTO;
 import website.booking_homestay.DTO.update.InvoiceUpdate;
 import website.booking_homestay.entity.enumreration.ECardType;
 import website.booking_homestay.entity.enumreration.EInvoice;
@@ -51,13 +50,13 @@ public class InvoiceController {
     }
 
     @GetMapping("combobox-invoice")
-    public ResponseEntity<?> getComboboxInvoice(@RequestParam("flag") Boolean flag){
-        if (flag) {
+    public ResponseEntity<?> getComboboxInvoice(){
+//        if (flag) {
             EInvoice[] statusValues = EInvoice.values();
             return ResponseEntity.ok(statusValues);
-        }else {
-            return invoiceService.getStatus();
-        }
+//        }else {
+//            return invoiceService.getStatus();
+//        }
     }
 
     @GetMapping("combobox-card")

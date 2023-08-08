@@ -14,12 +14,11 @@ public class Signup {
     @NotBlank
     private String username;
     @NotBlank
+    private String password;
+    @NotBlank
     private String fullName;
     @NotBlank
     private String email;
     @NotBlank
-    private String password;
-    @NotBlank
     private String phoneNumber;
-    private String role;
 }

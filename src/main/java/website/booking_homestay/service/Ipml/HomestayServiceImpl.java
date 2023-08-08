@@ -9,16 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import website.booking_homestay.DTO.FacilityDTO;
-import website.booking_homestay.DTO.HomestayDTO;
+import website.booking_homestay.DTO.chart.Ranks;
 import website.booking_homestay.DTO.create.HomestayCreate;
-import website.booking_homestay.DTO.details.BranchDetails;
-import website.booking_homestay.DTO.details.HomesPricesDetails;
-import website.booking_homestay.DTO.details.HomestayDetails;
+import website.booking_homestay.DTO.details.*;
 import website.booking_homestay.DTO.update.HomestayUpdate;
-import website.booking_homestay.DTO.view.*;
 import website.booking_homestay.entity.*;
-import website.booking_homestay.entity.enumreration.EPrice;
 import website.booking_homestay.entity.enumreration.ERole;
 import website.booking_homestay.entity.enumreration.EStatus;
 import website.booking_homestay.exception.BaseException;
@@ -78,7 +73,7 @@ public class HomestayServiceImpl implements IHomestayService {
         homestay.setUpdateOn(new Date());
         homestay.setUpdateBy(username);
         homestay.setFlag(false);
-        homestay.setStatus(EStatus.OPEN);
+        homestay.setStatus(EStatus.MAINTENANCE);
         homestay.setBranch(branch);
         try {
             homestayRepository.save(homestay);
@@ -95,6 +90,8 @@ public class HomestayServiceImpl implements IHomestayService {
         String username = contextHolder.getUsernameFromContext();
         Homestay homestay = homestayRepository.findById(homestayId)
                 .orElseThrow(() -> new BaseException(HttpStatus.NOT_FOUND,MessageResponse.NOT_FOUND));
+        if (homestay.getHomePrices().isEmpty() && homestayUpdate.getStatus().equals(EStatus.OPEN.name()))
+            return ResponseEntity.badRequest().body("Homestay doesn't any price, can't OPEN");
         modelMapper.map(homestayUpdate,homestay);
         homestay.setUpdateOn(new Date());
         homestay.setUpdateBy(username);
@@ -260,11 +257,57 @@ public class HomestayServiceImpl implements IHomestayService {
         HomeClientDetail detail = modelMapper.map(homestay, HomeClientDetail.class);
         List<Tourist> tourists = homestay.getBranch().getTourists().stream().toList();
         detail.setTourists(tourists);
+        HomesPrices homesPrices = homesPricesRepository.findByPricePresent(homestay.getHomestayId());
+        detail.setPrice(homesPrices.getPrice());
         return ResponseEntity.ok(detail);
     }
 
     @Override
     public ResponseEntity<?> getHomestaysClient(Long branchId, Date checkIn, Date checkOut, Integer numPeople) {
+        if (branchId == 0 || checkIn == null || checkOut == null || numPeople <= 0)
+            return ResponseEntity.badRequest().body("Couldn't find it due to lack of information!");
+        List<Homestay> homestays = homestayRepository.findHomestaysClient(numPeople,branchId,checkIn,checkOut);
+        if (homestays.isEmpty()) return ResponseEntity.badRequest().body("No matching homestay found!");
+        List<HomesClient> homesClients = new ArrayList<>();
+        homestays.forEach(homestay -> {
+            HomesPrices homesPrices = homesPricesRepository.findByPricePresent(homestay.getHomestayId());
+            HomesClient homesClient = new HomesClient(homestay.getHomestayId(),homestay.getName(),
+                    homestay.getNumPeople(),homesPrices.getPrice(),homestay.getImages().get(0));
+            homesClients.add(homesClient);
+        });
+        return ResponseEntity.ok(homesClients);
+    }
+
+    public record HomesDTO(Long branchId,String address, String name, Double price, String image){}
+    @Override
+    public ResponseEntity<?> getHomestaysPublic() {
+        List<Homestay> homestays = homestayRepository.findHomestayFromEachBranch();
+        List<HomesDTO> homesDTOS = new ArrayList<>();
+//        List<HomesClient> homesClients = new ArrayList<>();
+        homestays.forEach(homestay -> {
+            HomesPrices homesPrices = homesPricesRepository.findByPricePresent(homestay.getHomestayId());
+            if (homesPrices != null){
+                Branch branch = homestay.getBranch();
+                HomesDTO homesDTO = new HomesDTO(branch.getBranchId(),branch.getProvince().getName()+", "+branch.getDistrict().getName()+", "+branch.getWard().getName(),
+                        homestay.getName(),homesPrices.getPrice(),homestay.getImages().get(0).getUrl());
+                homesDTOS.add(homesDTO);
+            }
+//            HomesClient homesClient = new HomesClient(homestay.getHomestayId(),homestay.getName(),
+//                    homestay.getNumPeople(),homesPrices.getPrice(),homestay.getImages().get(0));
+        });
+        return ResponseEntity.ok(homesDTOS);
+    }
+
+    @Override
+    public ResponseEntity<?> getRanks() {
+        User user = contextHolder.getUser();
+        List<Ranks> ranks;
+        if (user.getRole().getName().equals(ERole.ADMIN)){
+            ranks = branchRepository.getRanksAdmin();
+            return ResponseEntity.ok(ranks);
+        }else {
+//            ranks =
+        }
         return null;
     }
 

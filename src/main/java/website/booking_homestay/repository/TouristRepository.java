@@ -14,4 +14,5 @@ public interface TouristRepository extends JpaRepository<Tourist,Long> {
     @Query("SELECT t FROM Tourist t WHERE t.touristId NOT IN (SELECT t2.touristId FROM Tourist t2 JOIN t2.branches b WHERE b.branchId = :branchId)")
     List<Tourist> findTouristsNotBelongBranch(@Param("branchId") Long branchId);
 
+
 }

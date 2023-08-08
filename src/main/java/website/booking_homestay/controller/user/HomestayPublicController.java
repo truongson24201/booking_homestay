@@ -1,6 +1,7 @@
 package website.booking_homestay.controller.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import website.booking_homestay.service.IBranchService;
@@ -22,15 +23,20 @@ public class HomestayPublicController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getHomestaysClient(@PathVariable("id") Long branchId,
-                                                @RequestParam("checkIn") Date checkIn,
-                                                @RequestParam("checkOut") Date checkOut,
+                                                @RequestParam(value = "checkIn",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date checkIn,
+                                                @RequestParam(value = "checkOut",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date checkOut,
                                                 @RequestParam("numPeople") Integer numPeople){
         return homestayService.getHomestaysClient(branchId,checkIn,checkOut,numPeople);
     }
 
-    @GetMapping("home/details/{id}")
+    @GetMapping("{id}/details")
     public ResponseEntity<?> getHomestayDetails(@PathVariable("id") Long homestayId){
         return homestayService.getHomestayDetailsClient(homestayId);
+    }
+
+    @GetMapping("homestays")
+    public ResponseEntity<?> getHomestaysPublic() {
+        return homestayService.getHomestaysPublic();
     }
 
 }

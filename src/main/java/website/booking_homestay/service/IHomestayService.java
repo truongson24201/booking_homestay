@@ -2,7 +2,6 @@ package website.booking_homestay.service;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-import website.booking_homestay.DTO.FacilityDTO;
 import website.booking_homestay.DTO.create.HomestayCreate;
 import website.booking_homestay.DTO.update.HomestayUpdate;
 
@@ -43,4 +42,8 @@ public interface IHomestayService {
     ResponseEntity<?> getHomestayDetailsClient(Long homestayId);
 
     ResponseEntity<?> getHomestaysClient(Long branchId, Date checkIn, Date checkOut, Integer numPeople);
+
+    ResponseEntity<?> getHomestaysPublic();
+
+    ResponseEntity<?> getRanks();
 }

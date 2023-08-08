@@ -6,12 +6,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import website.booking_homestay.DTO.combox.HomestayCombox;
 import website.booking_homestay.DTO.details.HomesPricesDetails;
 import website.booking_homestay.DTO.details.HomestayDetails;
 import website.booking_homestay.DTO.details.PriceListDetails;
-import website.booking_homestay.DTO.view.HomePricesDTO;
-import website.booking_homestay.DTO.view.PriceHomesDTO;
 import website.booking_homestay.entity.HomePriceId;
 import website.booking_homestay.entity.HomesPrices;
 import website.booking_homestay.entity.Homestay;
@@ -66,5 +63,6 @@ public interface HomesPricesRepository extends JpaRepository<HomesPrices, HomePr
     @Query("SELECT hp FROM HomesPrices hp WHERE hp.homestay.homestayId = :homestayId " +
             "AND hp.priceList.pricelistId = :priceId")
     HomesPrices findHomesPricesById(@Param("homestayId") Long homestayId,@Param("priceId") Long priceId);
+
 
 }

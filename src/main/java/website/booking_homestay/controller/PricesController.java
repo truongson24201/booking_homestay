@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import website.booking_homestay.DTO.create.HomePrice;
-import website.booking_homestay.DTO.create.PriceListCreate;
-import website.booking_homestay.DTO.combox.HomestayCombox;
 import website.booking_homestay.entity.enumreration.EPrice;
 import website.booking_homestay.service.IPricesService;
+import website.booking_homestay.service.Ipml.SchedulingServiceImpl;
 
 import java.util.Date;
 
@@ -17,6 +16,7 @@ import java.util.Date;
 public class PricesController {
 
     private final IPricesService pricesService;
+    private final SchedulingServiceImpl schedulingService;
 
     @GetMapping("")
     public ResponseEntity<?> getPriceList(@RequestParam(name = "id", defaultValue = "0") Long branchId){
@@ -73,5 +73,10 @@ public class PricesController {
     public ResponseEntity<?> getStatus(){
         EPrice[] statusValues = EPrice.values();
         return ResponseEntity.ok(statusValues);
+    }
+
+    @PutMapping("refresh")
+    public ResponseEntity<?> refreshAllPrices() {
+        return schedulingService.refreshAllPrices();
     }
 }

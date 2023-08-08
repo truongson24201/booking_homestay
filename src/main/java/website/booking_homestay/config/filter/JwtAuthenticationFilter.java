@@ -55,7 +55,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
 //            System.out.println("VoVo");
 //            System.out.println(headerAuth.substring(7).toUpperCase());
-            return headerAuth.substring(7);
+            String token = headerAuth.substring(7);
+            if (token.equals("null")) return null;
+            return token;
         }
 
         return null;

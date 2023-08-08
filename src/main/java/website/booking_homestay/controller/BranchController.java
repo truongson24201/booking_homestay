@@ -4,13 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import website.booking_homestay.DTO.BranchDTO;
-import website.booking_homestay.DTO.TouristDTO;
 import website.booking_homestay.DTO.create.BranchCreate;
 import website.booking_homestay.DTO.update.BranchUpdate;
-import website.booking_homestay.DTO.view.UserView;
-import website.booking_homestay.entity.Tourist;
 import website.booking_homestay.service.IAccountService;
 import website.booking_homestay.service.IBranchService;
 
