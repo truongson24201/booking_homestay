@@ -49,5 +49,7 @@ public interface IInvoiceService {
 
     ResponseEntity<?> getTotalCancel(Date from, Date to);
 
-    ResponseEntity<?> getTotalOfYear(Long year);
+    ResponseEntity<?> getTotalOfYear(int year);
+
+    ResponseEntity<?> getInvoicesDate(String status,Date date);
 }

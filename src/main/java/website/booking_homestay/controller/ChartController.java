@@ -54,7 +54,7 @@ public class ChartController {
     }
 
     @GetMapping("total")
-    public ResponseEntity<?> getTotalOfYear(@RequestParam("year") Long year){
+    public ResponseEntity<?> getTotalOfYear(@RequestParam("year") int year){
         return invoiceService.getTotalOfYear(year);
     }
 

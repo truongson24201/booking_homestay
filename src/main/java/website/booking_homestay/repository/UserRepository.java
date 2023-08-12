@@ -2,6 +2,7 @@ package website.booking_homestay.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import website.booking_homestay.DTO.chart.Ranks;
 import website.booking_homestay.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

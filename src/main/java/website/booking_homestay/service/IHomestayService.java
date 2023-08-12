@@ -15,7 +15,7 @@ public interface IHomestayService {
 
     ResponseEntity<?> getStatus();
 
-    ResponseEntity<?> getHomestays(Long branchId);
+    ResponseEntity<?> getHomestays(Long branchId,Date date);
 
     ResponseEntity<?> getHomestayDetails(Long homestayId);
 
@@ -46,4 +46,7 @@ public interface IHomestayService {
     ResponseEntity<?> getHomestaysPublic();
 
     ResponseEntity<?> getRanks();
+
+    ResponseEntity<?> getCalendar(int year, int month);
+
 }

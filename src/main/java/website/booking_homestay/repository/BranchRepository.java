@@ -85,5 +85,23 @@ public interface BranchRepository extends JpaRepository<Branch,Long> {
             "GROUP BY b.name")
     List<Ranks> getRanksAdmin();
 
+//    @Query("SELECT new website.booking_homestay.DTO.chart.Ranks(u.username,SUM(i.total)) " +
+//            "FROM User u " +
+//            "JOIN u.invoices i " +
+//            "WHERE u.branch.branchId = :branchId " +
+//            "and i.status = 'PAID' or i.status = 'CHECKOUT' " +
+//            "GROUP BY u.accountId, u.username "+
+//            "ORDER BY SUM(i.total) DESC")
+
+    @Query("SELECT new website.booking_homestay.DTO.chart.Ranks(u.username,SUM(i.total)) " +
+            "FROM Branch b " +
+            "JOIN b.homestays h " +
+            "JOIN h.invoices i " +
+            "JOIN i.user u " +
+            "WHERE b.branchId = :branchId " +
+            "and (i.status = 'PAID' OR i.status = 'CHECKOUT') " +
+            "GROUP BY u.username " +
+            "ORDER BY SUM(i.total) DESC")
+    List<Ranks> getRanksManager(@Param("branchId") Long branchId);
 
 }

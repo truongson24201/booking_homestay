@@ -1,6 +1,7 @@
 package website.booking_homestay.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import website.booking_homestay.DTO.update.InvoiceUpdate;
@@ -8,6 +9,8 @@ import website.booking_homestay.entity.enumreration.ECardType;
 import website.booking_homestay.entity.enumreration.EInvoice;
 import website.booking_homestay.service.IInvoiceService;
 import website.booking_homestay.service.Ipml.SchedulingServiceImpl;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping("api/invoices")
@@ -17,8 +20,12 @@ public class InvoiceController {
     private final SchedulingServiceImpl schedulingService;
 
     @GetMapping("")
-    public ResponseEntity<?> getInvoices(@RequestParam(value = "status",defaultValue = "all") String status){
-        return invoiceService.getInvoices(status);
+    public ResponseEntity<?> getInvoices(@RequestParam(value = "status",defaultValue = "all") String status,
+                                         @RequestParam(value = "date",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date){
+        if (date != null){
+            return invoiceService.getInvoicesDate(status,date);
+        }else
+            return invoiceService.getInvoices(status);
     }
 
     @GetMapping("search")

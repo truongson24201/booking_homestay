@@ -126,6 +126,28 @@ public class InvoiceServiceImpl implements IInvoiceService {
         return ResponseEntity.ok(invoicesDetails);
     }
 
+    @Override
+    public ResponseEntity<?> getInvoicesDate(String status, Date date) {
+        User user = contextHolder.getUser();
+        EInvoice eInvoice = EInvoice.valueOf(status);
+        List<Invoice> invoices = new ArrayList<>();
+        if (user.getRole().getName().equals(ERole.ADMIN)){
+            invoices = invoiceRepository.findOfStatusDate(date,eInvoice);
+        }
+        else {
+            Branch branch = user.getBranch();
+            if (branch == null) return ResponseEntity.badRequest().body("You don't have branch!");
+            invoices = invoiceRepository.findAllOfBranchDate(user.getBranch().getBranchId(),date,eInvoice);
+        }
+        List<InvoiceDetails> invoicesDetails = new ArrayList<>();
+        invoices.forEach(invoice -> {
+            InvoiceDetails detail = modelMapper.map(invoice,InvoiceDetails.class);
+            detail.setHomestayId(invoice.getHomestay().getHomestayId());
+            detail.setName(invoice.getHomestay().getName());
+            invoicesDetails.add(detail);
+        });
+        return ResponseEntity.ok(invoicesDetails);
+    }
 
     @Override
     public ResponseEntity<?> getInvoiceDetails(Long invoiceId) {
@@ -378,21 +400,22 @@ public class InvoiceServiceImpl implements IInvoiceService {
         return ResponseEntity.ok(totalBooking);
     }
 
+    public record TotalOfYear(Long month,Double total){}
     @Override
-    public ResponseEntity<?> getTotalOfYear(Long year) {
+    public ResponseEntity<?> getTotalOfYear(int year) {
         User user = contextHolder.getUser();
         List<Object[]> results;
-        List<TotalBooking> totalBookings = new ArrayList<>();
+        List<TotalOfYear> totalOfYears = new ArrayList<>();
         if (user.getRole().getName().equals(ERole.ADMIN)){
             results = invoiceRepository.getTotalOfYear(year);
             for (Object[] result : results) {
-                TotalBooking totalBooking = new TotalBooking((Long) result[0],(Double) result[1]);
-                totalBookings.add(totalBooking);
+                TotalOfYear totalOfYear = new TotalOfYear(((Integer) result[0]).longValue(),(Double) result[1]);
+                totalOfYears.add(totalOfYear);
             }
         }else {
 
         }
-        return ResponseEntity.ok(totalBookings);
+        return ResponseEntity.ok(totalOfYears);
     }
 
     public InvoiceView mapInvoiceToInvoiceView(Invoice invoice){

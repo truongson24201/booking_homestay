@@ -34,6 +34,12 @@ public interface HomestayRepository extends JpaRepository<Homestay,Long> {
     @Query("SELECT h FROM Homestay h WHERE h.branch.branchId =:branchId and h.numPeople >= :numPeople and h.status = 'OPEN'")
     List<Homestay> findAllByNumPeople(@Param("branchId") Long branchId,@Param("numPeople") Integer numPeople);
 
+    @Query("SELECT h FROM Homestay h WHERE h.branch.branchId =:branchId " +
+            "and h.status = 'OPEN' and not exists " +
+            "(SELECT i FROM Invoice i WHERE i.homestay = h AND i.status <> 'CANCEL' " +
+            "AND (i.checkIn >= :date and i.checkOut <= :date))")
+    List<Homestay> findAllEmpty(@Param("branchId") Long branchId,@Param("date") Date date);
+
     List<Homestay> findAllByBranch_BranchId(Long branchId);
 
     @Query("SELECT h FROM Homestay h WHERE h.branch.branchId =:branchId and h.flag = true")
@@ -108,5 +114,8 @@ public interface HomestayRepository extends JpaRepository<Homestay,Long> {
             "JOIN h.invoices i " +
             "WHERE i.status = 'CANCEL' and i.checkIn >= :from and i.checkOut <= :to ")
     TotalBooking getTotalCancelAdmin(@Param("from") Date from,@Param("to") Date to);
+
+    @Query(value = "SELECT MONTH(check_out) as month, SUM(total) as total FROM invoices WHERE YEAR(check_out) = :year AND status = 'CHECKOUT' GROUP BY MONTH(check_out)", nativeQuery = true)
+    List<Object[]> getTotalOfYear(int year);
 
 }

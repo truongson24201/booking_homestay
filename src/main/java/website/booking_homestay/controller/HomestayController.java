@@ -1,6 +1,7 @@
 package website.booking_homestay.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import website.booking_homestay.service.IHomestayService;
 import website.booking_homestay.service.Ipml.SchedulingServiceImpl;
 
 import java.io.IOException;
+import java.util.Date;
 
 @RestController
 @RequestMapping("api/homestays")
@@ -22,8 +24,15 @@ public class HomestayController {
     private final SchedulingServiceImpl schedulingService;
 
     @GetMapping("")
-    public ResponseEntity<?> getHomestays(@RequestParam(name = "id",defaultValue = "") Long branchId){
-        return homestayService.getHomestays(branchId);
+    public ResponseEntity<?> getHomestays(@RequestParam(name = "id",defaultValue = "") Long branchId,
+                                          @RequestParam(name = "date",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date){
+        return homestayService.getHomestays(branchId,date);
+    }
+
+    @GetMapping("calendar")
+    public ResponseEntity<?> getCalendar(@RequestParam(value = "month",required = false) int month,
+                                         @RequestParam(value = "year",required = false) int year){
+        return homestayService.getCalendar(year,month);
     }
 
     @GetMapping("{id}")

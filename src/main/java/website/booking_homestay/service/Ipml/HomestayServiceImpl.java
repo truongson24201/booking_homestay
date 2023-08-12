@@ -1,5 +1,6 @@
 package website.booking_homestay.service.Ipml;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HomestayServiceImpl implements IHomestayService {
     private final ModelMapper modelMapper;
-    private final PricesRepository pricesRepository;
+//    private final PricesRepository pricesRepository;
     private final IContextHolder contextHolder;
     private final BranchRepository branchRepository;
     private final HomestayRepository homestayRepository;
@@ -40,29 +41,11 @@ public class HomestayServiceImpl implements IHomestayService {
     private final HomestayImageRepository imageRepository;
     private final FacilitiesRepository facilityRepository;
     private final HomesPricesRepository homesPricesRepository;
-    private final InvoiceRepository invoiceRepository;
+//    private final InvoiceRepository invoiceRepository;
+//    private final UserRepository userRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(HomestayServiceImpl.class);
 
-
-//    @Override
-//    public ResponseEntity<?> getHomestaysClient(Long branchId, Date checkIn, Date checkOut, Integer numPeople) {
-//        if (checkIn.before(new Date()) || checkOut.before(new Date())) return ResponseEntity.ok("Empty");
-//        List<Homestay> homestays = homestayRepository.findAllByNumPeople(branchId,numPeople);
-//        homestays.forEach(homestay -> {
-//            if (invoiceRepository.checkInvoicesHomeMatch(homestay.getHomestayId(),checkIn,checkOut)){
-//                homestays.remove(homestay);
-//            }
-//        });
-//        List<HomestayClient> homestayClients = new ArrayList<>();
-//        homestays.forEach(homestay -> {
-//            HomestayClient homestayClient = modelMapper.map(homestay,HomestayClient.class);
-//            HomesPrices homesPrices = homesPricesRepository.findByPricePresent(homestay.getHomestayId());
-//            homestayClient.setPrice(homesPrices.getPriceList().getPrice());
-//            homestayClients.add(homestayClient);
-//        });
-//        return ResponseEntity.ok(homestayClients);
-//    }
 
     @Transactional
     @Override
@@ -144,8 +127,13 @@ public class HomestayServiceImpl implements IHomestayService {
 
 
     @Override
-    public ResponseEntity<?> getHomestays(Long branchId) {
-        List<Homestay> homestays = homestayRepository.findAllByBranch_BranchId(branchId);
+    public ResponseEntity<?> getHomestays(Long branchId,Date date) {
+        List<Homestay> homestays = new ArrayList<>();
+        if (date != null){
+            homestays = homestayRepository.findAllEmpty(branchId,date);
+        }else {
+            homestays = homestayRepository.findAllByBranch_BranchId(branchId);
+        }
         List<HomestayDetails> homestayDetails = homestays.stream().map(homestay -> modelMapper.map(homestay,HomestayDetails.class)).collect(Collectors.toList());
         return ResponseEntity.ok(homestayDetails);
     }
@@ -306,11 +294,16 @@ public class HomestayServiceImpl implements IHomestayService {
             ranks = branchRepository.getRanksAdmin();
             return ResponseEntity.ok(ranks);
         }else {
-//            ranks =
+            ranks = branchRepository.getRanksManager(user.getBranch().getBranchId());
         }
-        return null;
+        return ResponseEntity.ok(ranks);
     }
 
+    @Override
+    public ResponseEntity<?> getCalendar(int year, int month) {
+
+        return null;
+    }
 
 //    @Override
 //    public ResponseEntity<?> getHomestayNotBelongBranch() {
