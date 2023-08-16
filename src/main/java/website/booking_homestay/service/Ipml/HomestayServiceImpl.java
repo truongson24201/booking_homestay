@@ -25,6 +25,8 @@ import website.booking_homestay.service.IImagesService;
 import website.booking_homestay.utils.MessageResponse;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,7 +43,7 @@ public class HomestayServiceImpl implements IHomestayService {
     private final HomestayImageRepository imageRepository;
     private final FacilitiesRepository facilityRepository;
     private final HomesPricesRepository homesPricesRepository;
-//    private final InvoiceRepository invoiceRepository;
+    private final InvoiceRepository invoiceRepository;
 //    private final UserRepository userRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(HomestayServiceImpl.class);
@@ -303,6 +305,30 @@ public class HomestayServiceImpl implements IHomestayService {
     public ResponseEntity<?> getCalendar(int year, int month) {
 
         return null;
+    }
+
+    public record HomesEmpty(Long homestayId,String name){}
+    @Override
+    public ResponseEntity<?> getHomestayEmpty(Long invoiceId, String checkIn) {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            Date date = format.parse(checkIn);
+            Invoice invoice = invoiceRepository.findById(invoiceId).get();
+            Homestay homestay1 = invoice.getHomestay();
+            List<Homestay> homestays = homestayRepository.findAllEmpty(homestay1.getBranch().getBranchId(),date);
+            List<HomesEmpty> homesEmpties = new ArrayList<>();
+//            List<HomestayDetails> homestayDetails = homestays.stream().map(homestay -> modelMapper.map(homestay,HomestayDetails.class)).collect(Collectors.toList());
+            int day = InvoiceServiceImpl.periodBetweenDays(new java.util.Date(invoice.getCheckIn().getTime()) ,new java.util.Date(invoice.getCheckOut().getTime()));
+            homestays.forEach(homestay -> {
+                HomesPrices homesPrices = homesPricesRepository.findByPricePresent(homestay.getHomestayId());
+                HomesEmpty homesEmpty = new HomesEmpty(homestay.getHomestayId(),homestay.getName()+" ("+day*homesPrices.getPrice()+"[$])");
+                homesEmpties.add(homesEmpty);
+            });
+            return ResponseEntity.ok(homesEmpties);
+        } catch (ParseException e) {
+            System.out.println("Error parsing date: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error!");
+        }
     }
 
 //    @Override

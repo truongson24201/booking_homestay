@@ -52,4 +52,6 @@ public interface IInvoiceService {
     ResponseEntity<?> getTotalOfYear(int year);
 
     ResponseEntity<?> getInvoicesDate(String status,Date date);
+
+    ResponseEntity<?> getCalendar(int year, int month);
 }

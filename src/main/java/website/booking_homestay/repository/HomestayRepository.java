@@ -37,7 +37,7 @@ public interface HomestayRepository extends JpaRepository<Homestay,Long> {
     @Query("SELECT h FROM Homestay h WHERE h.branch.branchId =:branchId " +
             "and h.status = 'OPEN' and not exists " +
             "(SELECT i FROM Invoice i WHERE i.homestay = h AND i.status <> 'CANCEL' " +
-            "AND (i.checkIn >= :date and i.checkOut <= :date))")
+            "AND i.checkIn <= :date and i.checkOut > :date)")
     List<Homestay> findAllEmpty(@Param("branchId") Long branchId,@Param("date") Date date);
 
     List<Homestay> findAllByBranch_BranchId(Long branchId);

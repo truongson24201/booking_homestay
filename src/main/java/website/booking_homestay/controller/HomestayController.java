@@ -107,4 +107,10 @@ public class HomestayController {
         return schedulingService.refreshPricesHomeId(homestayId);
     }
 
+    @GetMapping("empty")
+    public ResponseEntity<?> getHomestayEmpty(@RequestParam(name = "id") Long invoiceId,
+                                              @RequestParam(name = "checkIn") String checkIn){
+        return homestayService.getHomestayEmpty(invoiceId,checkIn);
+    }
+
 }

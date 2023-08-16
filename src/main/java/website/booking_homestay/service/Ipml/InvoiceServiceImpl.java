@@ -1,5 +1,6 @@
 package website.booking_homestay.service.Ipml;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.jdi.event.ExceptionEvent;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -168,6 +169,15 @@ public class InvoiceServiceImpl implements IInvoiceService {
         if (invoiceUpdate.getCardType() != null){
             invoice.setCardType(ECardType.valueOf(invoiceUpdate.getCardType()));
         }
+        if (!invoice.getHomestay().getHomestayId().equals(invoiceUpdate.getHomestayId())){
+            invoice.setHomestay(null);
+            Homestay homestay = homestayRepository.findById(invoiceUpdate.getHomestayId()).get();
+            invoice.setHomestay(homestay);
+            int day = periodBetweenDays(new java.util.Date(invoice.getCheckIn().getTime()) ,new java.util.Date(invoice.getCheckOut().getTime()));
+            HomesPrices homesPrices = homesPricesRepository.findByPricePresent(homestay.getHomestayId());
+            invoice.setTotal(day*homesPrices.getPrice());
+
+        }
         invoice.setStatus(EInvoice.valueOf(invoiceUpdate.getStatus()));
         invoice.setUpdateBy(contextHolder.getUsernameFromContext());
         invoice.setUpdateOn(new Date());
@@ -207,7 +217,7 @@ public class InvoiceServiceImpl implements IInvoiceService {
         return ResponseEntity.ok(invoiceFull);
     }
 
-    public int periodBetweenDays(Date checkIn, Date checkOut){
+    public static int periodBetweenDays(Date checkIn, Date checkOut){
         LocalDate localDate1 = checkIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate localDate2 = checkOut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         Period period = Period.between(localDate1, localDate2);
@@ -428,6 +438,26 @@ public class InvoiceServiceImpl implements IInvoiceService {
         invoiceView.setName(homestay.getName());
         invoiceView.setNumPeople(homestay.getNumPeople());
         return invoiceView;
+    }
+
+    public record HomeCalendar(String name,String address,
+            @JsonFormat(pattern = "dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh") Date date,boolean type
+    ) {}
+    @Override
+    public ResponseEntity<?> getCalendar(int year, int month) {
+        User user = contextHolder.getUser();
+        List<Invoice> invoices = invoiceRepository.findInvoiceCalendar(user.getAccountId(),year,month);
+        if (invoices.isEmpty()) return ResponseEntity.ok(invoices);
+        List<HomeCalendar> homeCalendars = new ArrayList<>();
+        invoices.forEach(invoice -> {
+            Branch branch = invoice.getHomestay().getBranch();
+            String address = branch.getProvince().getName()+", "+branch.getDistrict().getName()+", "+branch.getWard().getName();
+            HomeCalendar homeCalendar = new HomeCalendar(invoice.getHomestay().getName(),address,invoice.getCheckIn(),false);
+            homeCalendars.add(homeCalendar);
+            homeCalendar = new HomeCalendar(invoice.getHomestay().getName(),address,invoice.getCheckOut(),true);
+            homeCalendars.add(homeCalendar);
+        });
+        return ResponseEntity.ok(homeCalendars);
     }
 
 }

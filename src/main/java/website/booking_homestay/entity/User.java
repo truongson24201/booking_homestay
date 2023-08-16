@@ -53,9 +53,12 @@ public class User {
     @JoinColumn(name = "branch_id",referencedColumnName = "branch_id")
     private Branch branch;
 
-
     @OneToMany(mappedBy = "user")
     private List<Invoice> invoices = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user",cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    private List<Evaluation> evaluations = new ArrayList<>();
 
 
     public User(String username, String fullName, String email, String password, String phoneNumber, Role role) {

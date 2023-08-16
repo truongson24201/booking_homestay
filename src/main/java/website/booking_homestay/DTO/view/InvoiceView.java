@@ -8,6 +8,7 @@ import java.util.Date;
 @Data
 public class InvoiceView {
     private Long invoiceId;
+    private Long homestayId;
     private String name;
     private Integer numPeople;
     private String address;

@@ -50,4 +50,12 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     @Query(value = "SELECT MONTH(check_out) as month, SUM(total) as total FROM invoices WHERE YEAR(check_out) = :year AND status = 'CHECKOUT' GROUP BY MONTH(check_out)", nativeQuery = true)
     List<Object[]> getTotalOfYear(int year);
 
+    @Query("SELECT CASE WHEN COUNT(i) > 0 THEN TRUE ELSE FALSE END FROM Invoice i " +
+            "WHERE i.status = 'CHECKOUT' and i.user.accountId = :accountId and i.homestay.homestayId = :homestayId ")
+    boolean checkEvaluation(@Param("accountId") Long accountId, @Param("homestayId") Long homestayId);
+
+    @Query(value = "SELECT * FROM invoices WHERE user_id = :accountId and (status = 'PAID' or status = 'UNPAID') " +
+            "and ((YEAR(check_in) = :year or YEAR(check_out) = :year) and (MONTH(check_in) = :month or MONTH (check_out) = :month))",nativeQuery = true)
+    List<Invoice> findInvoiceCalendar(@Param("accountId") Long accountId, @Param("year") int year,@Param("month") int month);
+
 }

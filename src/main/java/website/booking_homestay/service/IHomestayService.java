@@ -49,4 +49,5 @@ public interface IHomestayService {
 
     ResponseEntity<?> getCalendar(int year, int month);
 
+    ResponseEntity<?> getHomestayEmpty(Long invoiceId, String checkIn);
 }

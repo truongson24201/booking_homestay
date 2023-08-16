@@ -48,6 +48,10 @@ public class Homestay {
     private List<HomesPrices> homePrices = new ArrayList<>();
 
     @JsonIgnore
+    @OneToMany(mappedBy = "homestay",cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    private List<Evaluation> evaluations = new ArrayList<>();
+
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
     @JoinTable(name = "homestays_facilities",
             joinColumns = @JoinColumn(name = "homestay_id"),
